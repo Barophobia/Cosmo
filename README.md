@@ -4,7 +4,7 @@
 
  - This script will NOT configure the internal ESXi firewall, if you want to do that you must do it through the web ui.
  - Certificates are not touched so if you don't want to use the self signed certificate then you must change them yourself.(It is recommended to keep a backup of the original certificates just incase they are required in the future)
- - Hosts are NOT put into lockdown mode
+ - Hosts are NOT put into lockdown mode by default
 
 ## Recommended remediations that must be done manually or are not completed by the script:
 <details>
