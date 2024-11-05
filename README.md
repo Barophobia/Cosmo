@@ -2,6 +2,9 @@
 
 <img src="https://raw.githubusercontent.com/Barophobia/Cosmo/refs/heads/main/img/screenshot.png" width=35% height=35%>
 
+## General information
+This was made to be an 'all in one' GUI based tool to make the process of hardening ESXi easier and more consistent. The reason it comes as a single powershell script is due to the ease of mobility, moving a single file is a lot easier than moving an entire codebase/source code in many other languages.
+
 ## Things to take into account before blindly running the script:
 
  - This script will NOT configure the internal ESXi firewall, if you want to do that you must do it through the web ui.
