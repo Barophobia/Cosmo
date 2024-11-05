@@ -1,5 +1,7 @@
 # Cosmo - ESXi Hardening Tool
 
+![Screenshot of the application](https://github.com/barophobia/cosmo/img/screenshot.png?raw=true)
+
 ## Things to take into account before blindly running the script:
 
  - This script will NOT configure the internal ESXi firewall, if you want to do that you must do it through the web ui.
