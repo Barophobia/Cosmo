@@ -1,6 +1,6 @@
 # Cosmo - ESXi Hardening Tool
 
-![Screenshot of the application](https://raw.githubusercontent.com/Barophobia/Cosmo/refs/heads/main/img/screenshot.png)
+<img src="https://raw.githubusercontent.com/Barophobia/Cosmo/refs/heads/main/img/screenshot.png" width=50% height=50%>
 
 ## Things to take into account before blindly running the script:
 
