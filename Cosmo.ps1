@@ -7,7 +7,7 @@ $form = New-Object System.Windows.Forms.Form
 $form.AutoSize = $true
 $form.Text = "Cosmo"
 $form.Size = New-Object System.Drawing.Size(800, 800)  # Fixed form size
-$form.Icon = "C:\Windows\UUS\amd64\WindowsUpdateSeeker.ico"
+#$form.Icon = "C:\Windows\UUS\amd64\WindowsUpdateSeeker.ico"
 $form.StartPosition = 'CenterScreen'  # Center the form on the screen
 
 # Watermark Text and Font
