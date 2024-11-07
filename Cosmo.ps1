@@ -11,7 +11,7 @@ $form.Size = New-Object System.Drawing.Size(800, 800)  # Fixed form size
 $form.StartPosition = 'CenterScreen'  # Center the form on the screen
 
 # Watermark Text and Font
-$watermarkText = "v0.1 - Probably Broken"
+$watermarkText = "v1.0 - Initial Release"
 $watermarkFont = New-Object System.Drawing.Font("Arial", 10, [System.Drawing.FontStyle]::Italic)
 $watermarkColor = [System.Drawing.Color]::Gray
 
@@ -109,6 +109,19 @@ $textSyslogIP.Width = 200
 $textSyslogIP.Location = New-Object System.Drawing.Point(250, $textSyslogIP.Top)  # Centered in the form
 $form.Controls.Add($textSyslogIP)
 
+# Create MOTD field
+$labelMotd = New-Object System.Windows.Forms.Label
+$labelMotd.Text = "MOTD:"
+$labelMotd.AutoSize = $true
+$labelMotd.Top = $groupBox.Bottom + 20
+$labelMotd.Left = 500 # Centered in the form
+$form.Controls.Add($labelMotd)
+
+$textMotd = New-Object System.Windows.Forms.TextBox
+$textMotd.Top = $labelMotd.Top + 20
+$textMotd.Width = 200
+$textMotd.Location = New-Object System.Drawing.Point(500, $textMotd.Top)  # Centered in the form
+$form.Controls.Add($textMotd)
 
 # Create a ComboBox for presets
 $dropdown = New-Object System.Windows.Forms.ComboBox
@@ -244,7 +257,28 @@ $connectButton.Add_Click({
 })
 $groupBox.Controls.Add($connectButton)
 
-# Create an action button to apply settings
+# Get the current configuration
+$currentConfig = Get-PowerCLIConfiguration
+
+# Check if the ParticipateInCeip is true
+if ($currentConfig.ParticipateInCeip -eq $true) {
+    Write-Host "ParticipateInCeip is currently set to true. Changing it to false..."
+    Set-PowerCLIConfiguration -ParticipateInCeip $false -Confirm:$false | Out-Null
+    Write-Host "ParticipateInCeip has been set to false."
+} else {
+    Write-Host "ParticipateInCeip is already set to false. No changes needed."
+}
+
+# Check if the invalidcertificate action is set to ignore and set if not
+if ($currentConfig.InvalidCertificateAction -ne "Ignore") {
+    Write-Host "InvalidCertificateAction is not set to 'Ignore'. Changing it to 'Ignore'..."
+    Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:$false | Out-Null
+    Write-Host "InvalidCertificateAction has been set to 'Ignore'."
+} else {
+    Write-Host "InvalidCertificateAction is already set to 'Ignore'. No changes needed."
+}
+
+# Action button to apply settings
 $applyButton = New-Object System.Windows.Forms.Button
 $applyButton.Text = "Apply Hardening"
 $applyButton.Width = 100
@@ -263,6 +297,15 @@ $applyButton.Add_Click({
         if (-not [string]::IsNullOrWhiteSpace($syslogServer)) {
             Write-Host "Setting Syslog Server to $syslogServer."
             Get-VMHost | Get-AdvancedSetting -Name Syslog.global.logHost | Set-AdvancedSetting -Value $syslogServer -Confirm:$false
+        }
+
+        # Set message of the day if provided
+        $motdText= $textMotd.Text
+        if (-not [string]::IsNullOrWhiteSpace($motdText)) {
+            Write-Host "Setting MOTD to $motdText."
+            Get-VMHost | Get-AdvancedSetting -Name Config.Etc.motd | Set-AdvancedSetting -Value $motdText -Confirm:$false
+            Get-VMHost | Get-AdvancedSetting -Name Config.Etc.issue | Set-AdvancedSetting -Value $motdText -Confirm:$false
+            Get-VMHost | Get-AdvancedSetting -Name Annotations.WelcomeMessage | Set-AdvancedSetting -Value $motdText -Confirm:$false
         }
 
         # Apply selected hardening settings
