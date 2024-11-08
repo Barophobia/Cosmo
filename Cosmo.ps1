@@ -11,7 +11,7 @@ $form.Size = New-Object System.Drawing.Size(800, 800)  # Fixed form size
 $form.StartPosition = 'CenterScreen'  # Center the form on the screen
 
 # Watermark Text and Font
-$watermarkText = "v1.0 - Initial Release"
+$watermarkText = "v1.1"
 $watermarkFont = New-Object System.Drawing.Font("Arial", 10, [System.Drawing.FontStyle]::Italic)
 $watermarkColor = [System.Drawing.Color]::Gray
 
