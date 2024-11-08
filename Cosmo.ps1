@@ -236,16 +236,16 @@ $statusLabel = New-Object System.Windows.Forms.Label
 $statusLabel.Text = "Not connected"
 $statusLabel.AutoSize = $true
 $statusLabel.Top = 175
-$statusLabel.Left = 285
+$statusLabel.Left = 180
 $groupBox.Controls.Add($statusLabel)
 
 # Create a button to connect to the host
 $connectButton = New-Object System.Windows.Forms.Button
-$connectButton.Text = "Connect to ESXi"
+$connectButton.Text = "Connect"
 $connectButton.Width = 100
 $connectButton.AutoSize = $true
 $connectButton.Top = 172
-$connectButton.Left = 172
+$connectButton.Left = 25
 #$connectButton.Location = New-Object System.Drawing.Point(50, 10)  # Centered in the panel
 $connectButton.Add_Click({
     # Gather credentials
@@ -265,7 +265,7 @@ $connectButton.Add_Click({
             $check.Enabled = $true
         }
         # Update the status label to indicate success
-        $statusLabel.Text = "Connected to ESXi host"
+        $statusLabel.Text = "Connected"
         $statusLabel.ForeColor = 'Green'  # Change text color to green for success
     } catch {
         [System.Windows.Forms.MessageBox]::Show("Error connecting to ESXi host: $_")
@@ -274,6 +274,30 @@ $connectButton.Add_Click({
     }
 })
 $groupBox.Controls.Add($connectButton)
+
+# Create a button to disconnect from the host
+$disconnectButton = New-Object System.Windows.Forms.Button
+$disconnectButton.Text = "Disconnect"
+$disconnectButton.Width = 100
+$disconnectButton.AutoSize = $true
+$disconnectButton.Top = 172
+$disconnectButton.Left = 320
+$disconnectButton.Add_Click({
+    try {
+        Disconnect-VIServer -Confirm:$false 
+        [System.Windows.Forms.MessageBox]::Show("Disconnected to ESXi host successfully.")
+        # disable all checkboxes after a successful disconnection
+        foreach ($check in $checkboxes.Values) {
+            $check.Enabled = $false
+        }
+        $statusLabel.Text = "Disconnected"
+        $statusLabel.ForeColor = 'Red'  # Change text color to red for disconnection
+    } catch {
+        [System.Windows.Forms.MessageBox]::Show("Error disconnecting from ESXi host: $_")
+
+    }
+})
+$groupBox.Controls.Add($disconnectButton)
 
 # Get the current configuration
 $currentConfig = Get-PowerCLIConfiguration
