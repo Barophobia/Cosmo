@@ -201,9 +201,10 @@ $columnOffset = 25     # Horizontal spacing between columns
 $columnIndex = 0  # Track the current column
 
 foreach ($label in $checkboxLabels) {
-    $checkbox = New-Object System.Windows.Forms.CheckBox
-    $checkbox.Text = $label
-    $checkbox.AutoSize = $true
+    $checkBox = New-Object System.Windows.Forms.CheckBox
+    $checkBox.Text = $label
+    $checkBox.AutoSize = $true
+    $checkBox.Enabled = $false
 
     # Calculate the position
     $checkbox.Top = $checkboxTop + ($checkboxSpacing * ($checkboxes.Count % $maxPerColumn))
@@ -230,6 +231,14 @@ $outputButtonPanel.Size = New-Object System.Drawing.Size(450, 50)
 $OutputButtonPanel.Location = New-Object System.Drawing.Point(05, 750)  # Fixed position from the top
 $form.Controls.Add($OutputButtonPanel)
 
+# Create a label for connection status
+$statusLabel = New-Object System.Windows.Forms.Label
+$statusLabel.Text = "Not connected"
+$statusLabel.AutoSize = $true
+$statusLabel.Top = 175
+$statusLabel.Left = 285
+$groupBox.Controls.Add($statusLabel)
+
 # Create a button to connect to the host
 $connectButton = New-Object System.Windows.Forms.Button
 $connectButton.Text = "Connect to ESXi"
@@ -251,8 +260,17 @@ $connectButton.Add_Click({
     try {
         Connect-VIServer -Server $hostIP -Credential $credential -ErrorAction Stop
         [System.Windows.Forms.MessageBox]::Show("Connected to ESXi host successfully.")
+        # Enable all checkboxes after a successful connection
+        foreach ($check in $checkboxes.Values) {
+            $check.Enabled = $true
+        }
+        # Update the status label to indicate success
+        $statusLabel.Text = "Connected to ESXi host"
+        $statusLabel.ForeColor = 'Green'  # Change text color to green for success
     } catch {
         [System.Windows.Forms.MessageBox]::Show("Error connecting to ESXi host: $_")
+        $statusLabel.Text = "Failed to connect to ESXi host"
+        $statusLabel.ForeColor = 'Red'  # Change text color to red for failure
     }
 })
 $groupBox.Controls.Add($connectButton)
@@ -769,7 +787,7 @@ $exitButton.Location = New-Object System.Drawing.Point(10, 900)  # Adjust positi
 $exitButton.Add_Click({
     try {
         # Disconnect from the ESXi host
-        Disconnect-VIServer -Confirm:$false
+        Disconnect-VIServer -Confirm:$false 
     } catch {
         [System.Windows.Forms.MessageBox]::Show("Error disconnecting: $_")
     }
